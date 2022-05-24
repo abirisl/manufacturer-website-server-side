@@ -32,7 +32,7 @@ async function run() {
           const cursor = manufacturerCollection.find(query);
           const sigleProduct = await cursor.toArray();
           res.send(sigleProduct)
-      })
+      });
 
      app.post('/order/:id', async(req,res) =>{
          const order = req.body;
