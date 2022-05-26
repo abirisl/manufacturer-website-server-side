@@ -141,13 +141,6 @@ async function run() {
         const result = await profileCollection.insertOne(newUser);
         res.send(result);
     });
-
-    app.post('/loadprofile', async(req,res) =>{
-        const newproduct = req.body;
-         const result = await profileCollection.insertOne(newproduct);
-         res.send(result)
-    })
-
    
     app.post('/create-payment-intent', verifyJwt, async(req,res) =>{
         const service = req.body;
