@@ -119,6 +119,38 @@ async function run() {
 
      });
 
+     app.post('/myprofile', async (req, res) => {
+        const newService = req.body;
+        const result = await profileCollection.insertOne(newService);
+        res.send(result);
+    });
+
+   
+
+    app.get("/myprofile/:email", async (req, res) => {
+        const email = req.params;
+        const cursor = profileCollection.find(email)
+        const products = await cursor.toArray()
+        res.send(products)
+    });
+
+    app.put('/myprofile/:id', async (req, res) => {
+        const id = req.params.id;
+        const updatUser = req.body;
+        const filter = { _id: ObjectId(id) }
+        const option = { upsert: true };
+        const updateDoc = {
+            $set: {
+                education: updatUser.education,
+                city: updatUser.city,
+                phone: updatUser.phone
+
+            }
+        };
+        const result = await profileCollection.updateOne(filter, updateDoc, option)
+        res.send(result);
+    });
+
      app.get('/manageproduct', async (req, res) => {
             const query = {};
             const cursor = manufacturerCollection.find(query);
