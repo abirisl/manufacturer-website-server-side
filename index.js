@@ -40,6 +40,8 @@ async function run() {
       const reviewCollection = client.db("manufacturer").collection("review");
       const userCollection = client.db("manufacturer").collection("user");
       const paymentCollection = client.db("manufacturer").collection("payment");
+      const profileCollection = client.db("manufacturer").collection("profile");
+
 
       app.get('/product', async(req,res) =>{
           const query = {};
@@ -52,6 +54,12 @@ async function run() {
           const users = await userCollection.find().toArray()
           res.send(users)
       });
+
+      app.get('/myprofile/:email', async(req,res) =>{
+          const email = req.params.email;
+          const user = await profileCollection.findOne({email: email});
+          res.send(user)
+      })
 
       app.get('/admin/:email', async(req,res) =>{
           const email = req.params.email;
@@ -129,10 +137,16 @@ async function run() {
      });
 
      app.post('/myprofile', async (req, res) => {
-        const newService = req.body;
-        const result = await profileCollection.insertOne(newService);
+        const newUser = req.body;
+        const result = await profileCollection.insertOne(newUser);
         res.send(result);
     });
+
+    app.post('/loadprofile', async(req,res) =>{
+        const newproduct = req.body;
+         const result = await profileCollection.insertOne(newproduct);
+         res.send(result)
+    })
 
    
     app.post('/create-payment-intent', verifyJwt, async(req,res) =>{
@@ -147,29 +161,6 @@ async function run() {
         res.send({clientSecret: paymentIntent.client_secret})
     })
 
-    app.get("/myprofile/:email", async (req, res) => {
-        const email = req.params;
-        const cursor = profileCollection.find(email)
-        const products = await cursor.toArray()
-        res.send(products)
-    });
-
-    app.put('/myprofile/:id', async (req, res) => {
-        const id = req.params.id;
-        const updatUser = req.body;
-        const filter = { _id: ObjectId(id) }
-        const option = { upsert: true };
-        const updateDoc = {
-            $set: {
-                education: updatUser.education,
-                city: updatUser.city,
-                phone: updatUser.phone
-
-            }
-        };
-        const result = await profileCollection.updateOne(filter, updateDoc, option)
-        res.send(result);
-    });
 
      app.get('/manageproduct', async (req, res) => {
             const query = {};
